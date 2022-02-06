@@ -1,0 +1,18 @@
+name: API Test
+on: [push, pull_request]
+jobs:
+  API-Testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: install newman globally
+        run: npm install -g newman nodemon
+      - name: setup directory and run test
+        working-directory: ./quotes-api
+        run: |
+          npm i
+          nodemon &
+          sleep 10
+          npm run test:api
+          kill -9 `lsof -i:3000 -t`
