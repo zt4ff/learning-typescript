@@ -8,11 +8,5 @@ dontenv.config();
 const PORT = process.env.PORT || 3000;
 
 App().then((app) => {
-  http.createServer(app).listen(PORT, (err: Error) => {
-    if (err) {
-      console.log(err.message);
-      process.exit(1);
-    }
-    console.log('Server running at port ', PORT);
-  });
+  http.createServer(app).listen(PORT);
 });
