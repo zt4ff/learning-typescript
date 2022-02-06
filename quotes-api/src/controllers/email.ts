@@ -2,13 +2,14 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import dotenv from 'dotenv';
+import { messages } from '../helpers/messages';
 import { isValidEmailAddress } from '../helpers/index';
 
 dotenv.config();
 
 // making use of mailtrap to create a fake smtp server here - https://mailtrap.io/inboxes/1619465/messages
 if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-  throw new Error('please provide SMTP server credentials');
+  throw new Error(messages.SMTP_CREDENTIAL_ERROR);
 }
 const transport = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -33,7 +34,7 @@ const emailOption: SMTPTransport.Options = {
 // eslint-disable-next-line max-len
 export const sendEmail = (to: string, text: string, subject?: string) => new Promise((resolve, reject) => {
   if (!isValidEmailAddress(to)) {
-    reject(new Error('expects a valid email in the mail'));
+    reject(new Error(messages.VALID_EMAIL_ERROR));
   }
 
   const sbj = `QUOTES API ${subject ? `- ${subject}` : ''}`;
@@ -42,6 +43,6 @@ export const sendEmail = (to: string, text: string, subject?: string) => new Pro
     to, text, subject: sbj, ...emailOption,
   }, (err) => {
     if (err) reject(err.message);
-    resolve('Email sent successfully');
+    resolve(messages.EMAIL_SENT_SUCCESS);
   });
 });
