@@ -9,6 +9,8 @@ jobs:
       - name: install newman globally
         run: npm install -g newman nodemon
       - name: setup directory and run test
+        env:
+          PRODUCTION_DATABASE: ${{ secrets.PRODUCTION_DATABASE}}
         working-directory: ./quotes-api
         run: |
           npm i
