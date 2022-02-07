@@ -36,13 +36,15 @@ export const authenticationMiddleware = (req:Request, res:Response, next:NextFun
 /**
  * middleware to handle all error from the database
  */
-export const handleQuotesError = (
+export const handleNamedError = (
   err: Error,
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  if (res.locals.error) {
+  if (err.name === 'QuotesRoutesError') {
+    return res.status(500).json({ error: err.message });
+  } if (err.name === 'AuthError') {
     return res.status(500).json({ error: err.message });
   }
   next(err);

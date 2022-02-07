@@ -10,7 +10,7 @@ import cluster from 'cluster';
 import dotenv from 'dotenv';
 import { quotesRouter } from './routes/quotes';
 import { userRouter } from './routes/user';
-import { handleQuotesError, handle404, authenticationMiddleware } from './middleware/index';
+import { handleNamedError, handle404, authenticationMiddleware } from './middleware/index';
 
 interface A {
   (): Promise<express.Application>
@@ -25,7 +25,9 @@ const App: A = async () => {
     if (process.env.PRODUCTION_DATABASE) {
       const closeConnection = await mongoose.connect(process.env.PRODUCTION_DATABASE);
       App.closeConnection = closeConnection;
-      console.log('Database connected successfully');
+      if (cluster.isWorker) {
+        console.log(`database at worker ${cluster.worker!.id} connected`);
+      } else console.log('Database connected successfully');
     } else {
       throw new Error('provided a connection url in the environment');
     }
@@ -40,19 +42,25 @@ const App: A = async () => {
     next();
   });
 
-  app.use(cookieParser(process.env.COOKIE_SECRET));
-  app.use(expressSession());
+  app.use(cookieParser(process.env.COOKIE_SECRET!));
+  app.use(expressSession({
+    secret: process.env.COOKIE_SECRET!,
+    resave: false,
+    saveUninitialized: true,
+  }));
 
   app.use(helmet());
   app.use(logger('dev'));
-  app.use(bodyParser({ extended: false }));
+
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
 
   app.use('/api', userRouter);
   app.use('/api', authenticationMiddleware);
   app.use('/api', quotesRouter);
 
   // error handler
-  app.use(handleQuotesError);
+  app.use(handleNamedError);
   app.use(handle404);
 
   return app;

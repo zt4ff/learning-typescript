@@ -7,6 +7,7 @@ import { User } from '../model/user';
 import { sendEmail } from '../controllers/email';
 import { isEmpty, isValidEmailAddress } from '../helpers';
 import { messages } from '../helpers/messages';
+import { ERRORS } from '../helpers/errors';
 
 dotenv.config();
 
@@ -43,7 +44,7 @@ export const signupUser = async (req: Request, res: Response, next: NextFunction
     await sendEmail(email, userCreationSuccessEmailText, 'Account Created');
     res.status(200).json({ message: messages.ACCOUNT_CREATION_SUCCESS });
   } catch (err) {
-    next(err);
+    next(new ERRORS.AuthError(err.message));
   }
 };
 
@@ -74,6 +75,6 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       res.status(200).json({ message: messages.LOGIN_SUCCESS });
     });
   } catch (err) {
-    next(err);
+    next(new ERRORS.AuthError(err.message));
   }
 };
