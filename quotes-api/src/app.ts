@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
+import cluster from 'cluster';
 import dotenv from 'dotenv';
 import { quotesRouter } from './routes/quotes';
 import { userRouter } from './routes/user';
@@ -32,6 +33,12 @@ const App: A = async () => {
     console.log(err.message);
     process.exit(1);
   }
+
+  // test the cluster response
+  app.use((req, res, next) => {
+    if (cluster.isWorker) console.log(`Requested handled by ${cluster.worker!.id}`);
+    next();
+  });
 
   app.use(cookieParser(process.env.COOKIE_SECRET));
   app.use(expressSession());
