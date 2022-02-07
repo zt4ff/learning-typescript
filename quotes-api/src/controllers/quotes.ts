@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Quote } from '../model/quote';
 import { QuotesRoutesError } from '../helpers/errors';
+import { messages } from '../helpers/messages';
 
 export const getAllQuote = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -27,12 +28,12 @@ export const postQuote = async (req: Request, res: Response, next: NextFunction)
   const { username } = req.authUser;
   try {
     if (!quote) {
-      return res.status(400).json({ error: 'where is the quote bro' });
+      return res.status(400).json({ error: '' });
     }
     const newQuote = new Quote({ user: username, quote });
     await newQuote.save();
     // eslint-disable-next-line no-underscore-dangle
-    res.status(200).json({ message: 'uploaded successfully', quote: newQuote });
+    res.status(200).json({ message: messages.QUOTE_UPLOAD_SUCCESS, quote: newQuote });
   } catch (err: any) {
     res.locals.error = new QuotesRoutesError(err.message);
     next(err);
@@ -52,7 +53,7 @@ export const getQuotesFromUser = async (req: Request, res: Response, next: NextF
 export const deleteQuote = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await Quote.deleteOne({ _id: req.params.id });
-    res.status(200).json({ message: 'Deleted quote successfully' });
+    res.status(200).json({ message: messages.QUOTE_DELETE_SUCCESS });
   } catch (err: any) {
     res.locals.error = new QuotesRoutesError(err.message);
     next(err);
