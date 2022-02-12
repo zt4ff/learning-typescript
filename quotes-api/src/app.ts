@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
 import cluster from 'cluster';
 import dotenv from 'dotenv';
+import * as Sentry from '@sentry/node';
 import { quotesRouter } from './routes/quotes';
 import { userRouter } from './routes/user';
 import { handleNamedError, handle404, authenticationMiddleware } from './middleware/index';
@@ -58,6 +59,24 @@ const App: A = async () => {
   app.use('/api', userRouter);
   app.use('/api', authenticationMiddleware);
   app.use('/api', quotesRouter);
+
+  app.get('/test', (req, res) => {
+    const transaction = Sentry.startTransaction({
+      op: 'test',
+      name: 'My First Test Transaction',
+    });
+
+    setTimeout(() => {
+      try {
+        foo();
+      } catch (e) {
+        Sentry.captureException(e);
+      } finally {
+        transaction.finish();
+        res.send('welcome');
+      }
+    }, 99);
+  });
 
   // error handler
   app.use(handleNamedError);

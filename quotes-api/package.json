@@ -10,6 +10,8 @@
     "test:unit": "npx jest __test__/unit_tests"
   },
   "dependencies": {
+    "@sentry/node": "^6.17.7",
+    "@sentry/tracing": "^6.17.7",
     "@types/cookie-parser": "^1.4.2",
     "@types/express-session": "^1.17.4",
     "@types/jest": "^27.4.0",

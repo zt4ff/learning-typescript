@@ -2,10 +2,17 @@
 import http from 'http';
 import dontenv from 'dotenv';
 import cluster from 'cluster';
+import * as Sentry from '@sentry/node';
+import * as Tracing from '@sentry/tracing';
 import { cpus } from 'os';
 import App from './app';
 
 dontenv.config();
+
+Sentry.init({
+  dsn: 'https://1879c3ac0ae4433bb5a4e9539b594fb0@o446659.ingest.sentry.io/5455863',
+  tracesSampleRate: 1.0,
+});
 
 const PORT = process.env.PORT || 3000;
 
