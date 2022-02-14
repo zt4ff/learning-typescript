@@ -2,7 +2,7 @@
     "watch": [
         "src"
     ],
-    "exec": "npx ts-node -T src/index.ts",
+    "exec": "npx ts-node -T -r dotenv/config src/index.ts dotenv_config_path=.env.development",
     "ext": "json,ts"
   }
   

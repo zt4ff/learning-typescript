@@ -4,7 +4,8 @@
   "main": "dist/app.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon",
+    "start:dev": "nodemon",
+    "build": "",
     "test:api": "cd postman_api_collections && newman run quote_api.collection.json -e quote_api.environment.json",
     "test": "npx jest",
     "test:unit": "npx jest __test__/unit_tests"

@@ -7,10 +7,8 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
 import cluster from 'cluster';
-import dotenv from 'dotenv';
 import * as Sentry from '@sentry/node';
-import { quotesRouter } from './routes/quotes';
-import { userRouter } from './routes/user';
+import { quotesRouter, userRouter } from './routes';
 import { handleNamedError, handle404, authenticationMiddleware } from './middleware/index';
 
 interface A {
@@ -19,12 +17,10 @@ interface A {
 }
 
 const App: A = async () => {
-  dotenv.config();
-
   const app: express.Application = express();
   try {
-    if (process.env.PRODUCTION_DATABASE) {
-      const closeConnection = await mongoose.connect(process.env.PRODUCTION_DATABASE);
+    if (process.env.DATABASE_URL) {
+      const closeConnection = await mongoose.connect(process.env.DATABASE_URL);
       App.closeConnection = closeConnection;
       if (cluster.isWorker) {
         console.log(`database at worker ${cluster.worker!.id} connected`);
@@ -59,24 +55,6 @@ const App: A = async () => {
   app.use('/api', userRouter);
   app.use('/api', authenticationMiddleware);
   app.use('/api', quotesRouter);
-
-  app.get('/test', (req, res) => {
-    const transaction = Sentry.startTransaction({
-      op: 'test',
-      name: 'My First Test Transaction',
-    });
-
-    setTimeout(() => {
-      try {
-        foo();
-      } catch (e) {
-        Sentry.captureException(e);
-      } finally {
-        transaction.finish();
-        res.send('welcome');
-      }
-    }, 99);
-  });
 
   // error handler
   app.use(handleNamedError);

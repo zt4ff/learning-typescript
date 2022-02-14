@@ -2,10 +2,7 @@
 import {
   NextFunction, Request, Response,
 } from 'express';
-import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-
-dotenv.config();
 
 /**
  * Checks is user is authenticated and adding {authUser} if user exist

@@ -2,14 +2,11 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import { User } from '../model/user';
 import { sendEmail } from '../controllers/email';
 import { isEmpty, isValidEmailAddress } from '../helpers';
 import { messages } from '../helpers/messages';
 import { ERRORS } from '../helpers/errors';
-
-dotenv.config();
 
 const validateUserCredential = (username:string, email: string, password: string) => {
   // is null or undefined
