@@ -47,7 +47,9 @@ const App: A = async () => {
   }));
 
   app.use(helmet());
-  app.use(logger('dev'));
+  if (process.env.NODE_ENV === 'development') {
+    app.use(logger('dev'));
+  }
 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
