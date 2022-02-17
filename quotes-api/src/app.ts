@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
+import cors from 'cors';
 import cluster from 'cluster';
 import * as Sentry from '@sentry/node';
 import { quotesRouter, userRouter } from './routes';
@@ -32,6 +33,9 @@ const App: A = async () => {
     console.log(err.message);
     process.exit(1);
   }
+
+  // cross origin resource sharing
+  app.use(cors());
 
   // test the cluster response
   app.use((req, res, next) => {
