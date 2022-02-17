@@ -1,19 +1,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import dotenv from 'dotenv';
 import { messages } from '../helpers/messages';
 import { isValidEmailAddress } from '../helpers/index';
 
-dotenv.config();
-
 // making use of mailtrap to create a fake smtp server here - https://mailtrap.io/inboxes/1619465/messages
-if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.SMTP_PORT) {
   throw new Error(messages.SMTP_CREDENTIAL_ERROR);
 }
 const transport = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: 2525,
+  port: parseInt(process.env.SMTP_PORT, 10),
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,

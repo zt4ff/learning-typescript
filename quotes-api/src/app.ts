@@ -6,10 +6,10 @@ import helmet from 'helmet';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
-import dotenv from 'dotenv';
-import { quotesRouter } from './routes/quotes';
-import { userRouter } from './routes/user';
-import { handleQuotesError, handle404, authenticationMiddleware } from './middleware/index';
+import cluster from 'cluster';
+import * as Sentry from '@sentry/node';
+import { quotesRouter, userRouter } from './routes';
+import { handleNamedError, handle404, authenticationMiddleware } from './middleware/index';
 
 interface A {
   (): Promise<express.Application>
@@ -17,14 +17,14 @@ interface A {
 }
 
 const App: A = async () => {
-  dotenv.config();
-
   const app: express.Application = express();
   try {
-    if (process.env.PRODUCTION_DATABASE) {
-      const closeConnection = await mongoose.connect(process.env.PRODUCTION_DATABASE);
+    if (process.env.DATABASE_URL) {
+      const closeConnection = await mongoose.connect(process.env.DATABASE_URL);
       App.closeConnection = closeConnection;
-      console.log('Database connected successfully');
+      if (cluster.isWorker) {
+        console.log(`database at worker ${cluster.worker!.id} connected`);
+      } else console.log('Database connected successfully');
     } else {
       throw new Error('provided a connection url in the environment');
     }
@@ -33,19 +33,33 @@ const App: A = async () => {
     process.exit(1);
   }
 
-  app.use(cookieParser(process.env.COOKIE_SECRET));
-  app.use(expressSession());
+  // test the cluster response
+  app.use((req, res, next) => {
+    if (cluster.isWorker) console.log(`Requested handled by ${cluster.worker!.id}`);
+    next();
+  });
+
+  app.use(cookieParser(process.env.COOKIE_SECRET!));
+  app.use(expressSession({
+    secret: process.env.COOKIE_SECRET!,
+    resave: false,
+    saveUninitialized: true,
+  }));
 
   app.use(helmet());
-  app.use(logger('dev'));
-  app.use(bodyParser({ extended: false }));
+  if (process.env.NODE_ENV === 'development') {
+    app.use(logger('dev'));
+  }
+
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
 
   app.use('/api', userRouter);
   app.use('/api', authenticationMiddleware);
   app.use('/api', quotesRouter);
 
   // error handler
-  app.use(handleQuotesError);
+  app.use(handleNamedError);
   app.use(handle404);
 
   return app;

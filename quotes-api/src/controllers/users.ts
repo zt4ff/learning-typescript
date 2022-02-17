@@ -2,13 +2,11 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import { User } from '../model/user';
 import { sendEmail } from '../controllers/email';
 import { isEmpty, isValidEmailAddress } from '../helpers';
 import { messages } from '../helpers/messages';
-
-dotenv.config();
+import { ERRORS } from '../helpers/errors';
 
 const validateUserCredential = (username:string, email: string, password: string) => {
   // is null or undefined
@@ -43,7 +41,7 @@ export const signupUser = async (req: Request, res: Response, next: NextFunction
     await sendEmail(email, userCreationSuccessEmailText, 'Account Created');
     res.status(200).json({ message: messages.ACCOUNT_CREATION_SUCCESS });
   } catch (err) {
-    next(err);
+    next(new ERRORS.AuthError(err.message));
   }
 };
 
@@ -74,6 +72,6 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       res.status(200).json({ message: messages.LOGIN_SUCCESS });
     });
   } catch (err) {
-    next(err);
+    next(new ERRORS.AuthError(err.message));
   }
 };

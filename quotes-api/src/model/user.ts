@@ -1,9 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const SF = process.env.SALT_FACTOR;
 if (!SF) {
