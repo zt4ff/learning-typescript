@@ -1,0 +1,20 @@
+definitions:
+ Quote:
+  type: object
+  required:
+   - user
+   - quote
+  properties:
+   _id:
+    type: string
+    description: The auto generated identifies for the quote
+   user:
+    type: object
+    description: This is user who made the quote
+   quote:
+    type: string
+    description: The text of the quote
+  example:
+   _id: 839y423h4b423948yh89b
+   user: {username: Kayode}
+   quotes: In this life, just have money

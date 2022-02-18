@@ -9,7 +9,6 @@ import expressSession from 'express-session';
 import cors from 'cors';
 import cluster from 'cluster';
 import swaggerJsDoc from 'swagger-jsdoc';
-import http from 'http';
 import swaggerUI from 'swagger-ui-express';
 import * as Sentry from '@sentry/node';
 import { quotesRouter, userRouter } from './routes';
@@ -22,25 +21,25 @@ interface A {
 
 const App: A = async () => {
   const app: express.Application = express();
-  try {
-    if (process.env.DATABASE_URL) {
-      const closeConnection = await mongoose.connect(process.env.DATABASE_URL);
-      App.closeConnection = closeConnection;
-      if (cluster.isWorker) {
-        console.log(`database at worker ${cluster.worker!.id} connected`);
-      } else console.log('Database connected successfully');
-    } else {
-      throw new Error('provided a connection url in the environment');
-    }
-  } catch (err: any) {
-    console.log(err.message);
-    process.exit(1);
-  }
+  // try {
+  //   if (process.env.DATABASE_URL) {
+  //     const closeConnection = await mongoose.connect(process.env.DATABASE_URL);
+  //     App.closeConnection = closeConnection;
+  //     if (cluster.isWorker) {
+  //       console.log(`database at worker ${cluster.worker!.id} connected`);
+  //     } else console.log('Database connected successfully');
+  //   } else {
+  //     throw new Error('provided a connection url in the environment');
+  //   }
+  // } catch (err: any) {
+  //   console.log(err.message);
+  //   process.exit(1);
+  // }
 
   // swagger documentation org
   const options: swaggerJsDoc.Options = {
     definition: {
-      openapi: '3.0.0',
+      swagger: '2.0',
       info: {
         title: 'Quote API',
         version: '1.0.0',
@@ -52,7 +51,7 @@ const App: A = async () => {
         },
       ],
     },
-    apis: ['**/docs/*.ts'],
+    apis: ['**/docs/*.yml'],
   };
 
   const spec = swaggerJsDoc(options);

@@ -1,0 +1,44 @@
+tags:
+ name: Quotes
+ description: The quotes managing API
+
+
+/api/quotes:
+  get:
+   tags: [Quotes]
+   summary: returns a list of quotes
+   produces:
+    - application/json
+   responses:
+    '200':
+     description: The list of quotes
+     schema:
+      type: array
+      items:
+        $ref: '#/definitions/Quote'
+    400:
+     description: Bad request, you need to authenticate user
+
+/api/quote/{id}:
+ get:
+  summary: Get quote by ID
+  tags: [Quotes]
+  parameters:
+   - in: path
+     name: id
+     schema:
+      type: string
+     required: string
+     description: This is the Quote id
+  produces:
+   - application/json
+  responses:
+   200:
+    description: returns a quote if found
+    schema:
+     type: object
+     $ref: '#/definitions/Quote'
+   400:
+    description: Bad request, you need to authenticate user
+   404:
+    description: cannot find quotes by id
