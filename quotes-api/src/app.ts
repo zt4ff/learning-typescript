@@ -8,6 +8,9 @@ import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
 import cors from 'cors';
 import cluster from 'cluster';
+import swaggerJsDoc from 'swagger-jsdoc';
+import http from 'http';
+import swaggerUI from 'swagger-ui-express';
 import * as Sentry from '@sentry/node';
 import { quotesRouter, userRouter } from './routes';
 import { handleNamedError, handle404, authenticationMiddleware } from './middleware/index';
@@ -33,6 +36,28 @@ const App: A = async () => {
     console.log(err.message);
     process.exit(1);
   }
+
+  // swagger documentation org
+  const options: swaggerJsDoc.Options = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'Quote API',
+        version: '1.0.0',
+        description: 'A simple quotes API to post and get quotes',
+      },
+      servers: [
+        {
+          url: 'http://localhost:3000',
+        },
+      ],
+    },
+    apis: ['**/docs/*.ts'],
+  };
+
+  const spec = swaggerJsDoc(options);
+
+  app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(spec));
 
   // cross origin resource sharing
   app.use(cors());
