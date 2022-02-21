@@ -1,0 +1,12 @@
+.container {
+    height: 500px;
+    width: 300px;
+    border: 1px solid orangered;
+    margin-bottom: 10px;
+}
+
+button {
+    border: none;
+    background: aqua;
+    padding: 7px 14px;
+}
