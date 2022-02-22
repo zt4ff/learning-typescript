@@ -6,7 +6,9 @@ class Board {
     }
 
     fillRect(x, y, color) {
-        ctx.fillStyle = color
+        if (color) {
+            ctx.fillStyle = color
+        }
         ctx.fillRect(x - 10 , y - 10, 20, 20)
     }
 
@@ -26,17 +28,24 @@ class Board {
 
 const socket = io()
 
-const form = document.querySelector("form")
-const input = document.querySelector("input")
-const div = document.querySelector("#messages")
+// display user name and color
+function displayUserInfo(container, username, color) {
+    const para = document.createElement("p")
+    const color = document.createElement("span")
+}
 
 // drawing our page
 const canvas = document.querySelector("canvas")
 const ctx = canvas.getContext("2d")
 const board = new Board(ctx)
 
+let user
+socket.on("user", usr => {
+    user = usr
+})
+
 socket.on("turn", ({x, y}) => {
-    board.fillRect(x, y)
+    board.fillRect(x, y, user.color)
 })
 
 canvas.addEventListener("click", e => {

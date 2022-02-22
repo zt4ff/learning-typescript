@@ -7,7 +7,8 @@ type User = {
 
 class RandomUser  {
 
-    public user: User
+    color: string
+    username: string
 
     static usrarray: Array<User> = [
         {
@@ -50,6 +51,10 @@ class RandomUser  {
     }
 
     constructor() {
-        this.user =
+        const {username, color} = this.getRandomUser(RandomUser.usrarray)
+        this.username = username
+        this.color = color
     }
 }
+
+export {RandomUser}
