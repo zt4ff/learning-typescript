@@ -1,3 +1,9 @@
 canvas {
     border: 1px solid green;
 }
+
+.usr-color {
+    width: 20px;
+    display: inline-block;
+    height: 20px;
+}

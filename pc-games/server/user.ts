@@ -9,6 +9,7 @@ class RandomUser  {
 
     color: string
     username: string
+    private rannum: number
 
     static usrarray: Array<User> = [
         {
@@ -41,20 +42,24 @@ class RandomUser  {
     // this is a dangorous function looping though selected user biswis
     // probably fix this later
     private getRandomUser(users: Array<User>):User {
-        const random = Math.floor(Math.random() * users.length)
-        if (!users[random].isSelected) {
-            users[random].isSelected = true
-            return users[random]
+        if (!users[this.rannum].isSelected) {
+            users[this.rannum].isSelected = true
+            return users[this.rannum]
         } else {
             return this.getRandomUser(users)
         }
     }
-
+    
     constructor() {
-        const {username, color} = this.getRandomUser(RandomUser.usrarray)
+        this.rannum = Math.floor(Math.random() * RandomUser.usrarray.length)
+        const {username, color } =  this.getRandomUser(RandomUser.usrarray)
         this.username = username
         this.color = color
     }
+
+    deselectUser() {
+        RandomUser.usrarray[this.rannum].isSelected = false
+    }
 }
 
-export {RandomUser}
+export {RandomUser, User}

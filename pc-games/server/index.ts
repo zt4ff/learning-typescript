@@ -2,24 +2,34 @@ import express from "express"
 import socket from "socket.io"
 import http from "http"
 import path from "path"
-import { RandomUser } from "./user"
+import { RandomUser, User } from "./user"
 
 const app = express()
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 3000
 
 app.use(express.static(path.join(__dirname, "../client")))
 
 const server = http.createServer(app)
 const io = new socket.Server(server)
 
-io.on("connection", socket => {
-    console.log("A devices connected")
-    // create user on connected and emit it immediately on connect
-    const user = new RandomUser()
-    socket.emit("user", user)
+// managing the instances of connected users here may a sniper in disguise
+// doing this for quickly for testing practise
+const users:Array<User> = []
 
+io.on("connection", socket => {
+    const user = new RandomUser()
+
+    users.push(user)
+
+    io.emit("users", users )
+    
     socket.on("turn", ({x, y}) => {
-        io.emit("turn", {x, y})
+        io.emit("turn", {x, y, color: user.color})
+    })
+    
+    socket.on("disconnect", () => {
+        user.deselectUser()
+        io.emit("users", users.filter(usr => usr.username != user.username))
     })
 })
 
