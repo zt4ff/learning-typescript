@@ -14,8 +14,8 @@ const io = new socket.Server(server)
 io.on("connection", socket => {
     console.log("A devices connected")
 
-    socket.on("message", message => {
-        io.emit("message", message)
+    socket.on("turn", ({x, y}) => {
+        io.emit("turn", {x, y})
     })
 })
 
