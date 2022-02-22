@@ -1,0 +1,7 @@
+{
+    "watch": [
+        "server"
+    ],
+    "exec": "npx ts-node -T server/index.ts",
+    "ext": "json,ts"
+}

@@ -36,9 +36,12 @@ if (cluster.isPrimary) {
   });
 } else {
   App().then((app) => {
-    http.createServer(app).listen(PORT, (err) => {
-      if (err) return console.log(`Error stating ${cluster.worker!.id} server`);
-      console.log(`worker ${cluster.worker!.id} server running`);
-    });
+    try {
+      http.createServer(app).listen(PORT, () => {
+        console.log(`worker ${cluster.worker!.id} server running`);
+      });
+    } catch (err) {
+      console.log(`error starting server at worker ${cluster.worker!.id} server`);
+    }
   });
 }
