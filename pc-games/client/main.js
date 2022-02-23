@@ -11,6 +11,14 @@ class Board {
         ctx.fillRect(x*20, y*20, 20, 20)
     }
 
+    renderBoardState(board = []) {
+        board.forEach((row, y) => {
+            row.forEach((color, x) => {
+                color && this.fillCell(x, y, color)
+            }) 
+        })
+    }
+
     drawBoard(numCells) {
         this.clearBoad()
 
@@ -27,6 +35,8 @@ class Board {
         
         this.ctx.strokeStyle = "#333"
         this.ctx.stroke()
+
+        this.renderBoardState()
     }
 
     clearBoad() {
@@ -79,7 +89,6 @@ const canvas = document.querySelector("canvas")
 const ctx = canvas.getContext("2d")
 const board = new Board(ctx)
 board.drawBoard(20)
-// board.fillCell(3, 2)
 
 const playingUserContainer = document.querySelector("#play-container")
 
@@ -89,6 +98,8 @@ socket.on("users", users => {
         displayUserInfo(playingUserContainer, usr.username, usr.color)
     })
 })
+
+socket.on("board", board.renderBoardState)
 
 socket.on("turn", ({x, y, color}) => {
     board.fillCell(x, y, color)

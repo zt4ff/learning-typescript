@@ -6,7 +6,6 @@ type User = {
 }
 
 class RandomUser  {
-
     color: string
     username: string
     private rannum: number
