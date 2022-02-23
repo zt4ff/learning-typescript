@@ -14,7 +14,7 @@ const io = new socket.Server(server)
 
 // managing the instances of connected users here may a sniper in disguise
 // doing this for quickly for testing practise
-const users:Array<User> = []
+let users:Array<User> = []
 
 io.on("connection", socket => {
     const user = new RandomUser()
@@ -29,8 +29,11 @@ io.on("connection", socket => {
     
     socket.on("disconnect", () => {
         user.deselectUser()
-        io.emit("users", users.filter(usr => usr.username != user.username))
+        users = users.filter(usr => usr.username != user.username)
+        io.emit("users", users)
     })
+    
+    console.log(users.length)
 })
 
 server.on("error", (err) => {

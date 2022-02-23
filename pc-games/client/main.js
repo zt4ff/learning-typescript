@@ -1,15 +1,36 @@
 ////////////////////////// board.jss
-
 class Board {
     constructor(context) {
         this.ctx = context
     }
 
-    fillRect(x, y, color) {
+    fillCell(x, y, color) {
         if (color) {
             ctx.fillStyle = color
         }
-        ctx.fillRect(x - 10 , y - 10, 20, 20)
+        ctx.fillRect(x*20, y*20, 20, 20)
+    }
+
+    drawBoard(numCells) {
+        this.clearBoad()
+
+
+        this.ctx.beginPath()
+        for (let i = 0; i < numCells + 1; i++) {
+            this.ctx.moveTo(i * numCells, 0)
+            this.ctx.lineTo(i * numCells, 400)
+            
+            this.ctx.moveTo(0, numCells * i)
+            this.ctx.lineTo(400, i * numCells)
+            
+        }
+        
+        this.ctx.strokeStyle = "#333"
+        this.ctx.stroke()
+    }
+
+    clearBoad() {
+        this.ctx.clearRect(0, 0, 400, 400)
     }
 
     // get the cordinates when click upon 
@@ -20,6 +41,13 @@ class Board {
         return {
             x: clientX - left,
             y: clientY - top
+        }
+    }
+    
+    getCellCordinates(x, y) {
+        return {
+            x: Math.floor(x / 20),
+            y: Math.floor(y / 20)
         }
     }
 }
@@ -50,6 +78,9 @@ const users = []
 const canvas = document.querySelector("canvas")
 const ctx = canvas.getContext("2d")
 const board = new Board(ctx)
+board.drawBoard(20)
+// board.fillCell(3, 2)
+
 const playingUserContainer = document.querySelector("#play-container")
 
 socket.on("users", users => {
@@ -60,12 +91,14 @@ socket.on("users", users => {
 })
 
 socket.on("turn", ({x, y, color}) => {
-    board.fillRect(x, y, color)
+    board.fillCell(x, y, color)
 })
 
 canvas.addEventListener("click", e => {
     const {x, y} = board.getClickCordinates(canvas, e)
 
+
+
     // change turn between players
-    socket.emit("turn", {x, y})
+    socket.emit("turn", board.getCellCordinates(x, y))
 })
