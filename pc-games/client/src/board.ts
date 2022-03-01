@@ -4,22 +4,6 @@ class Board {
     this.ctx = context;
   }
 
-  fillCell(x: number, y: number, color: string) {
-    if (color) {
-      this.ctx.fillStyle = color;
-    }
-    this.ctx.fillRect(x * 20, y * 20, 20, 20);
-  }
-
-  // gets board state from the server and renders it
-  renderBoardState(board: Array<Array<string>> = []) {
-    board.forEach((row, y) => {
-      row.forEach((color, x) => {
-        color && this.fillCell(x, y, color);
-      });
-    });
-  }
-
   drawBoard(numCells: number) {
     this.clearBoard();
 
@@ -34,6 +18,25 @@ class Board {
 
     this.ctx.strokeStyle = "#333";
     this.ctx.stroke();
+  }
+
+  // gets board state from the server and renders it
+  // the array is given by the client
+  // TODO create type declaration in seperate files
+  renderBoardState(board: Array<Array<string>> = []) {
+    this.drawBoard(20);
+    board.forEach((row, y) => {
+      row.forEach((color, x) => {
+        color && this.fillCell(x, y, color);
+      });
+    });
+  }
+
+  fillCell(x: number, y: number, color: string) {
+    if (color) {
+      this.ctx.fillStyle = color;
+    }
+    this.ctx.fillRect(x * 20, y * 20, 20, 20);
   }
 
   clearBoard() {

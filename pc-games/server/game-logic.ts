@@ -1,7 +1,7 @@
 // manages the game state and the board state
 
 class GameBoard {
-  private _board: Array<Array<string>>;
+  private _board: Array<Array<string | null>>;
   private _size: number;
 
   constructor(size: number) {
@@ -11,10 +11,16 @@ class GameBoard {
       .map(() => Array(this._size).fill(null));
   }
 
-  clear() {
+  public clear() {
     this._board = Array(this._size)
       .fill(null)
       .map(() => Array(this._size).fill(null));
+  }
+
+  public removeDisconnectedUserFromBoard(color: string) {
+    this._board = this._board.map((row) => {
+      return row.map((c) => (c === color ? null : c));
+    });
   }
 
   public get board() {
