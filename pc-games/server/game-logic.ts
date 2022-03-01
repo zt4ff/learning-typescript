@@ -1,24 +1,29 @@
 // manages the game state and the board state
 
-const createGameBoard = (size: number) => {
-    let board: Array<any>
+class GameBoard {
+  private _board: Array<Array<string>>;
+  private _size: number;
 
-    // create a 2d array with null
-    const clear = () => {
-        board = Array(size).fill(null).map(() => Array(size).fill(null))
-    }
+  constructor(size: number) {
+    this._size = size;
+    this._board = Array(this._size)
+      .fill(null)
+      .map(() => Array(this._size).fill(null));
+  }
 
-    clear()
+  clear() {
+    this._board = Array(this._size)
+      .fill(null)
+      .map(() => Array(this._size).fill(null));
+  }
 
-    const getBoard = () => board
+  public get board() {
+    return this._board;
+  }
 
-    const makeTurn = (x: any, y: any, color: string) => {
-        board[y][x] = color
-    }
-
-    return {
-        clear, getBoard, makeTurn
-    }
+  public makeTurn(x: number, y: number, color: string) {
+    this._board[y][x] = color;
+  }
 }
 
-export {createGameBoard}
+export { GameBoard };

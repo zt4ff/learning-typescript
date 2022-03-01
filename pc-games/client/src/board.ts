@@ -11,6 +11,7 @@ class Board {
     this.ctx.fillRect(x * 20, y * 20, 20, 20);
   }
 
+  // gets board state from the server and renders it
   renderBoardState(board: Array<Array<string>> = []) {
     board.forEach((row, y) => {
       row.forEach((color, x) => {
@@ -20,7 +21,7 @@ class Board {
   }
 
   drawBoard(numCells: number) {
-    this.clearBoad();
+    this.clearBoard();
 
     this.ctx.beginPath();
     for (let i = 0; i < numCells + 1; i++) {
@@ -33,11 +34,9 @@ class Board {
 
     this.ctx.strokeStyle = "#333";
     this.ctx.stroke();
-
-    this.renderBoardState();
   }
 
-  clearBoad() {
+  clearBoard() {
     this.ctx.clearRect(0, 0, 400, 400);
   }
 

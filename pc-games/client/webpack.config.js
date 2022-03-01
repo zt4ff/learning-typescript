@@ -20,7 +20,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
   },
   watch: true,
-  watchOption: {
+  watchOptions: {
     ignored: "**node_modules/",
   },
 };
