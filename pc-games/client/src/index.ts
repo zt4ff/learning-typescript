@@ -20,7 +20,6 @@ displayUserInfo.clear = (container: Element) => {
 // using server process persistence which is not good,
 // you can make use of database persistence to work on this on
 // make use of instances on a server that create games in pairs of 5 (no of users)
-const users = [];
 
 // drawing our page
 const canvas = document.querySelector("canvas");
@@ -37,7 +36,9 @@ socket.on("users", (users: Array<{ username: string; color: string }>) => {
   });
 });
 
-socket.on("board", board.renderBoardState);
+socket.on("board", (bd) => {
+  board.renderBoardState(bd);
+});
 
 socket.on("turn", ({ x, y, color }) => {
   board.fillCell(x, y, color);

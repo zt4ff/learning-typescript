@@ -23,7 +23,7 @@ io.on("connection", (socket) => {
   const user = new RandomUser();
 
   // enable client get information on board immediately the connect
-  //   socket.emit("board", gameBoard.board);
+  socket.emit("board", gameBoard.board);
 
   users.push(user);
 
