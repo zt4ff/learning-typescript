@@ -21,7 +21,6 @@ let users: Array<User> = [];
 
 io.on("connection", (socket) => {
   const user = new RandomUser();
-  console.log(user);
 
   // enable client get information on board immediately the connect
   socket.emit("board", gameBoard.board);
@@ -31,7 +30,8 @@ io.on("connection", (socket) => {
   io.emit("users", users);
 
   socket.on("turn", ({ x, y }) => {
-    gameBoard.makeTurn(x, y, user.color);
+    const playerWon = gameBoard.makeTurn(x, y, user.color);
+    console.log(`user: ${user.username} won: ${playerWon}`);
     io.emit("turn", { x, y, color: user.color });
   });
 
