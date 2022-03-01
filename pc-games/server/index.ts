@@ -4,6 +4,7 @@ import http from "http";
 import path from "path";
 import { GameBoard } from "./game-logic";
 import { RandomUser, User } from "./user";
+import { createCooldown } from "./cooldown";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ let users: Array<User> = [];
 
 io.on("connection", (socket) => {
   const user = new RandomUser();
+  const cooldown = createCooldown(500);
 
   // enable client get information on board immediately the connect
   socket.emit("board", gameBoard.board);
@@ -30,9 +32,14 @@ io.on("connection", (socket) => {
   io.emit("users", users);
 
   socket.on("turn", ({ x, y }) => {
-    const playerWon = gameBoard.makeTurn(x, y, user.color);
-    console.log(`user: ${user.username} won: ${playerWon}`);
-    io.emit("turn", { x, y, color: user.color });
+    if (cooldown()) {
+      const playerWon = gameBoard.makeTurn(x, y, user.color);
+      io.emit("turn", { x, y, color: user.color });
+      console.log(`user: ${user.username} won: ${playerWon}`);
+      if (playerWon) {
+        console.log("somebody won");
+      }
+    }
   });
 
   socket.on("disconnect", () => {
