@@ -1,10 +1,14 @@
 import { Board } from "./board";
-
 import { io } from "socket.io-client";
 
 const socket = io();
 
-// display user name and color
+/**
+ * @description
+ * @param container the DOM element for containing the document type
+ * @param username the username of the user to be displayed
+ * @param color color of the user to be displayed
+ */
 function displayUserInfo(container: Element, username: string, color: string) {
   const para = document.createElement("p");
   para.innerHTML = `<span class="usr-color" style="background-color: ${color}"></span> ${username}`;
@@ -16,16 +20,11 @@ displayUserInfo.clear = (container: Element) => {
   container.innerHTML = "";
 };
 
-// users in game
-// using server process persistence which is not good,
-// you can make use of database persistence to work on this on
-// make use of instances on a server that create games in pairs of 5 (no of users)
-
-// drawing our page
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-const board = new Board(ctx);
-board.drawBoard(20);
+const numOfRowAndColumn = 20;
+const board = new Board(ctx, numOfRowAndColumn);
+board.drawBoard();
 
 const playingUserContainer = document.querySelector("#play-container");
 
@@ -45,8 +44,5 @@ socket.on("turn", ({ x, y, color }) => {
 });
 
 canvas.addEventListener("click", (e) => {
-  const { x, y } = board.getClickCordinates(canvas, e);
-
-  // change turn between players
-  socket.emit("turn", board.getCellCordinates(x, y));
+  socket.emit("turn", board.getCellCordinates(canvas, e));
 });
