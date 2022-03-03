@@ -42,7 +42,7 @@ class Board {
    * @description loops through the logic state from the server and renders the color on the game board
    * @param board the board state which is an array of array with color strings
    */
-  public renderBoardState(board: Array<Array<string>> = []) {
+  public renderBoardState(board: GameBoard = []) {
     this.drawBoard();
     board.forEach((row, y) => {
       row.forEach((color, x) => {
