@@ -30,7 +30,7 @@ class GameBoard {
   }
 
   private numMatchers(x: number, y: number, dx: number, dy: number) {
-    let i = 0;
+    let i = 1;
     while (
       this.inBounds(x + i * dx, y + i * dy) &&
       this._board[y + i * dy][x + i * dx] === this._board[y][x]
