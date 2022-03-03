@@ -42,3 +42,17 @@ tags:
     description: Bad request, you need to authenticate user
    404:
     description: cannot find quotes by id
+
+# TODO
+
+/quote:
+  post:
+    summary: post a single quote
+    tags: [Quotes]
+    produces:
+      - application/json
+    parameters:
+      - $ref: '#/definitions/Quote'
+    responses:
+      200:
+        description: returns a confirmation message
