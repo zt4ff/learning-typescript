@@ -1,7 +1,7 @@
 // manages the game state and the board state
 
-class GameBoard {
-  private _board: Array<Array<string | null>>;
+class Board {
+  private _board: GameBoard;
   private _size: number;
 
   constructor(size: number) {
@@ -69,4 +69,4 @@ class GameBoard {
   }
 }
 
-export { GameBoard };
+export { Board };
