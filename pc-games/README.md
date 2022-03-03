@@ -14,3 +14,7 @@ The game features a gameplay where each users try to fill five consecutuve rows 
 ## Contribution
 
 TODO: create `CONTRIBUTING.md`
+
+## Sandbox
+
+The `test.js` and `test.html` is like a sandbox file for me test different codes and logic
