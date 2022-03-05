@@ -1,5 +1,5 @@
-import { test, expect, Page, chromium } from "@playwright/test";
-import { Eyes, Target } from "@applitools/eyes-playwright";
+import { test, Page, chromium } from "@playwright/test";
+import { Eyes } from "@applitools/eyes-playwright";
 import {
   open,
   close,
