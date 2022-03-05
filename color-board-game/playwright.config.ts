@@ -1,13 +1,14 @@
-import type { PlaywrightTestConfig } from "@playwright/test";
+import { PlaywrightTestConfig } from "@playwright/test";
 import { devices } from "@playwright/test";
 import path from "path";
 
 console.log(path.join(__dirname, "__e2e__", "test"));
 
 const config: PlaywrightTestConfig = {
-  globalSetup: require.resolve("./__e2e__/globalSetup.ts"),
-  testDir: path.join(__dirname, "__e2e__", "test"),
-  testMatch: "*.spec.ts",
+  globalSetup: require.resolve(
+    path.join(__dirname, "__tests__", "e2e", "globalSetup.ts")
+  ),
+  testDir: path.join(__dirname, "__tests__", "e2e"),
   timeout: 30 * 1000,
   expect: {
     timeout: 5000,
@@ -17,7 +18,8 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    actionTimeout: 0,
+    headless: false,
+    launchOptions: { slowMo: 500 },
     trace: "on-first-retry",
   },
   projects: [
@@ -28,10 +30,10 @@ const config: PlaywrightTestConfig = {
       },
     },
   ],
-  // webServer: {
-  //   command: "yarn run dev",
-  //   port: 3000,
-  // },
+  webServer: {
+    command: "yarn run dev",
+    port: 3000,
+  },
 };
 
 export default config;

@@ -10,7 +10,8 @@
   "scripts": {
     "client:build": "cd client && webpack",
     "dev": "nodemon",
-    "test": "playwright test"
+    "test": "playwright test",
+    "serve": "lt --port 3000"
   },
   "devDependencies": {
     "@applitools/eyes-playwright": "^1.11.2",
