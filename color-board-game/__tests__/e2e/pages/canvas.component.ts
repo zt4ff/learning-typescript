@@ -15,14 +15,18 @@ const nonWinningMoves = [
   [165, 165],
 ];
 
-export const open = async (page: Page, eyes: Eyes, testName: string) => {
+export const open = async (page: Page, testName: string, eyes?: Eyes) => {
   await page.goto("http://localhost:3000");
-  await eyes.open(page, "color-board", testName);
+  if (eyes) {
+    await eyes.open(page, "color-board", testName);
+  }
 };
 
-export const close = async (page: Page, eyes: Eyes) => {
+export const close = async (page: Page, eyes?: Eyes) => {
   await page.close();
-  await eyes.close();
+  if (eyes) {
+    await eyes.close();
+  }
 };
 
 export const checkIfCanvasExist = async (page: Page) => {
@@ -49,8 +53,8 @@ export const getUsernameAndColor = async (
 
 export const makeMoves = async (
   page: Page,
-  eyes: Eyes,
-  numberOfMoves: number
+  numberOfMoves: number,
+  eyes?: Eyes
 ) => {
   if (numberOfMoves > nonWinningMoves.length) {
     throw new Error(
@@ -67,5 +71,7 @@ export const makeMoves = async (
     });
   }
 
-  await eyes.check("board", Target.region(selectors.gameboard).layout());
+  if (eyes) {
+    await eyes.check("board", Target.region(selectors.gameboard).layout());
+  }
 };

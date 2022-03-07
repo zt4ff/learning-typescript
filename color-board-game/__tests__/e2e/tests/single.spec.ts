@@ -16,7 +16,7 @@ test.describe("singleplayer", () => {
     const browser = await chromium.launch();
     page = await browser.newPage();
     eyes = new Eyes();
-    await open(page, eyes, "singleplayer");
+    await open(page, "singleplayer", eyes);
   });
 
   test.afterAll(async () => {
@@ -33,6 +33,6 @@ test.describe("singleplayer", () => {
 
   test.only("make 5 moves on game board and check the game state in applitools", async () => {
     test.setTimeout(60000);
-    await makeMoves(page, eyes, 5);
+    await makeMoves(page, 5, eyes);
   });
 });
