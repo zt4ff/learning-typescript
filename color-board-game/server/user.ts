@@ -1,17 +1,26 @@
+import { Board } from "./board";
 import { names } from "./names";
+import { joinRoom } from "./room";
+
 // generate a suite of random colors and usernames
 type User = {
   username: string;
   color: string;
+  roomID: string;
   isSelected?: boolean;
 };
 
 class RandomUser {
   public username: string;
   public color: string;
+  public roomID: string;
+  public board: Board;
+
   constructor() {
     this.username = this.getRandomName();
     this.color = this.convertStringToColor(this.username);
+    this.roomID = joinRoom().id;
+    this.board = joinRoom().board;
   }
 
   private getRandomName() {
