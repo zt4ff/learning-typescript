@@ -135,5 +135,6 @@ dist
 ########################
 test.html
 test.js
+sandbox.ts
 test-results/
 playwright-report/
