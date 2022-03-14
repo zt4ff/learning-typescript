@@ -1,28 +1,23 @@
-import { test, Page, chromium } from "@playwright/test";
-import { close, makeMoves, open } from "../pages/canvas.component";
+import { Eyes } from "@applitools/eyes-playwright";
+import { test, chromium, Browser, BrowserContext } from "@playwright/test";
+import { multiplayerMoves } from "../pages/canvas.component";
 
 test.describe("MULTIPLAYER PLAYER", () => {
   // figure out testing strategy for multiplayer
-  let page: Page;
+  let eyes: Eyes;
+  let browser: Browser;
+  let context: BrowserContext;
 
   test.beforeAll(async () => {
-    const browser = await chromium.launch();
-    page = await browser.newPage();
-    await open(page, "multiplayer");
+    browser = await chromium.launch();
+    context = await browser.newContext();
+    eyes = new Eyes();
   });
 
-  test.afterAll(async () => {
-    await close(page);
-  });
+  test("multiplayer", async () => {
+    test.setTimeout(90000);
+    const tasks = await multiplayerMoves(2, context, eyes);
 
-  test("trying mocking and intercepting the websocket connection", async () => {
-    await page.on("websocket", (page) => {
-      console.log(page);
-    });
-  });
-
-  test("make 3 moves", async () => {
-    test.setTimeout(60000);
-    await makeMoves(page, 3);
+    await Promise.all(tasks);
   });
 });

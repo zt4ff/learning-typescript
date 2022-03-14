@@ -1,5 +1,5 @@
-import { Page, expect } from "@playwright/test";
-import { Eyes, Target, MatchLevel } from "@applitools/eyes-playwright";
+import { Page, expect, BrowserContext } from "@playwright/test";
+import { Eyes, Target } from "@applitools/eyes-playwright";
 
 const selectors = {
   gameboard: '[data-testid="gameboard"]',
@@ -7,12 +7,21 @@ const selectors = {
 };
 
 /* Each inner array represents the cordinates on a 2D plane (x, y)  */
-const nonWinningMoves = [
+const diagonalMoves = [
   [5, 5],
   [45, 45],
   [85, 85],
   [125, 125],
   [165, 165],
+];
+
+/* Each inner array represents the cordinates on a 2D plane (x, y)  */
+const verticalMoves = [
+  [205, 5],
+  [205, 45],
+  [205, 85],
+  [205, 125],
+  [205, 165],
 ];
 
 export const open = async (page: Page, testName: string, eyes?: Eyes) => {
@@ -39,7 +48,7 @@ export const getUsernameAndColor = async (
   const listOfPlayers = await page.$$(selectors.displayedPlayers);
   const currentPlayer = listOfPlayers[listOfPlayers.length - 1];
 
-  const username = await (await currentPlayer.textContent()).trim();
+  const username = (await currentPlayer.textContent()).trim();
   expect(username).toBeTruthy();
 
   const color = await currentPlayer.$eval("span", (node) => {
@@ -54,19 +63,25 @@ export const getUsernameAndColor = async (
 export const makeMoves = async (
   page: Page,
   numberOfMoves: number,
-  eyes?: Eyes
+  eyes?: Eyes,
+  movementType: "diag" | "vert" = "diag"
 ) => {
-  if (numberOfMoves > nonWinningMoves.length) {
+  let moves: Array<Array<number>>;
+  if (movementType === "diag") {
+    moves = diagonalMoves;
+  } else moves = verticalMoves;
+
+  if (numberOfMoves > moves.length) {
     throw new Error(
-      `The number of moves should not be greater than ${nonWinningMoves.length}`
+      `The number of moves should not be greater than ${diagonalMoves.length}`
     );
   }
   for (let i = 0; i < numberOfMoves; i++) {
     await page.locator(selectors.gameboard).click({
       button: "left",
       position: {
-        x: nonWinningMoves[i][0],
-        y: nonWinningMoves[i][1],
+        x: moves[i][0],
+        y: moves[i][1],
       },
     });
   }
@@ -74,4 +89,57 @@ export const makeMoves = async (
   if (eyes) {
     await eyes.check("board", Target.region(selectors.gameboard).layout());
   }
+};
+
+export const multiplayerMoves = async (
+  numOfPages: number,
+  context: BrowserContext,
+  eyes: Eyes
+) => {
+  // make a page and pre-allocating an array with empty null
+  // the Promise.all is necessary because the async callback in Array.map
+  // would return a Promise that would resove to what is returned in the callback
+  const pages = await Promise.all(
+    Array(numOfPages)
+      .fill(null)
+      .map(async () => {
+        const page = await context.newPage();
+        return page;
+      })
+  );
+
+  // mapping through the number of pages and creating a new promise that calls an async IIFE
+  const tasks = pages.map(async (page, ind) => {
+    return new Promise((resolve, reject) => {
+      (async () => {
+        try {
+          await page.goto("http://localhost:3000");
+
+          // if even, make us of the diagonal movement coordinate on the canva
+          if (ind % 2 === 0) {
+            await makeMoves(page, 5, null, "diag");
+          } else await makeMoves(page, 5, null, "vert");
+
+          // making use of the first page in the pages array to take a snapshot and send to applitools
+          // for visual testing
+          if (ind === 0) {
+            await page.waitForTimeout(10000);
+            await eyes.open(page, "color-board", "multiplayer");
+            await eyes.check(
+              "board",
+              Target.region(selectors.gameboard).layout()
+            );
+            await eyes.close();
+          }
+
+          resolve(undefined);
+        } catch (err) {
+          reject(err);
+        }
+      })();
+    });
+  });
+
+  // returns an array of promise
+  return tasks;
 };
