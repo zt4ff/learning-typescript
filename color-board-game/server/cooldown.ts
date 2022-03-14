@@ -4,14 +4,19 @@
  *              is greater than the delay in milliseconds and update the lastUpdateTime to the current time
  * @param delay in milliseconds
  */
-export const createCooldown = (delay: number) => {
-  let lastUpdateTime = 0;
 
-  return () => {
-    if (Date.now() - lastUpdateTime > delay) {
-      lastUpdateTime = Date.now();
+export class CoolDown {
+  private lastUpdateTime;
+  private delay: number;
+  constructor(delay: number) {
+    this.lastUpdateTime = 0;
+    this.delay = delay;
+  }
+
+  public check() {
+    if (Date.now() - this.lastUpdateTime > this.delay) {
+      this.lastUpdateTime = Date.now();
       return true;
-    }
-    return false;
-  };
-};
+    } else return false;
+  }
+}

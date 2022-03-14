@@ -59,7 +59,7 @@ class Board {
     return false;
   }
 
-  public get board() {
+  public get getBoard() {
     return this._board;
   }
 
